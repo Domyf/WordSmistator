@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,13 +21,14 @@ import java.util.logging.Logger;
  * @author Domenico
  */
 public class Window extends javax.swing.JFrame {
+    
     private String easyFileName = "easywords";
     private String mediumFileName = "mediumwords";
     private String hardFileName = "hardwords";
     private long wordIndex; 
-    /**
-     */
     private PrintWriter easyFile, mediumFile, hardFile;
+    private File wordList;
+    
     public Window() {
         initComponents();
         setLocationRelativeTo(null);
@@ -100,6 +103,7 @@ public class Window extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        fileChooser = new javax.swing.JFileChooser();
         btnEasy = new javax.swing.JButton();
         btnHard = new javax.swing.JButton();
         btnMedium = new javax.swing.JButton();
@@ -114,8 +118,10 @@ public class Window extends javax.swing.JFrame {
         easyWords = new javax.swing.JLabel();
         mediumWords = new javax.swing.JLabel();
         hardWords = new javax.swing.JLabel();
+        btnLoad = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("WordSmistor 2000");
         setResizable(false);
 
         btnEasy.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -196,6 +202,14 @@ public class Window extends javax.swing.JFrame {
         hardWords.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         hardWords.setText("0");
 
+        btnLoad.setText("Apri...");
+        btnLoad.setFocusable(false);
+        btnLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -227,6 +241,8 @@ public class Window extends javax.swing.JFrame {
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
                             .addComponent(hardWords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnLoad)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnNew)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnNext)))
@@ -239,7 +255,8 @@ public class Window extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnNext)
-                        .addComponent(btnNew))
+                        .addComponent(btnNew)
+                        .addComponent(btnLoad))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
@@ -335,6 +352,17 @@ public class Window extends javax.swing.JFrame {
             txtMeaning.setText("");
         }
     }//GEN-LAST:event_txtMeaningMouseClicked
+
+    private void btnLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadActionPerformed
+        int returnValue = fileChooser.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            wordList = fileChooser.getSelectedFile();
+            //TODO: Qui ho scelto il file e bisogna caricarlo
+            //TODO: Ricordarsi di ricominciare da dove si era rimasti prima
+            //TODO: Se premo Scarta deve scartare la parola corrente della wordlist
+            //TODO: Se premo Nuova devo rendere focussabili le textfield e scrivere io una parola da aggiungere
+        }
+    }//GEN-LAST:event_btnLoadActionPerformed
     
     /**
      * @param args the command line arguments
@@ -374,10 +402,12 @@ public class Window extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEasy;
     private javax.swing.JButton btnHard;
+    private javax.swing.JButton btnLoad;
     private javax.swing.JButton btnMedium;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnNext;
     private javax.swing.JLabel easyWords;
+    private javax.swing.JFileChooser fileChooser;
     private javax.swing.JLabel hardWords;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
