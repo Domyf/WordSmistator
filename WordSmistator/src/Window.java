@@ -42,7 +42,7 @@ public class Window extends javax.swing.JFrame {
             BufferedReader reader = new BufferedReader(new FileReader(fileName + ".sql"));
             if(reader.readLine().isEmpty())
                 return createNewFile(fileName);
-            return new PrintWriter(new FileWriter(fileName + ".sql"));
+            return new PrintWriter(new FileWriter(fileName + ".sql", true), true);
         }catch(FileNotFoundException ex){
             return createNewFile(fileName);
         }catch(IOException ex){
@@ -52,12 +52,22 @@ public class Window extends javax.swing.JFrame {
     /**Crea un nuovo file con il nome passato per argomento inserendo il comando INSERT*/
     private PrintWriter createNewFile(String fileName){
         try {
-            PrintWriter writer = new PrintWriter(new FileWriter(fileName + ".sql") );
+            PrintWriter writer = new PrintWriter(new FileWriter(fileName + ".sql"));
             writer.println("INSERT INTO " + fileName + "(ID, Word, Meaning, Category) VALUES");
             writer.flush();
             return writer;
         } catch (IOException ex) {
             return null;
+        }
+    }
+    private void saveCounters(){
+        try{
+            PrintWriter writer = new PrintWriter(new FileWriter("save"));
+            writer.println(easyWords.getText()); writer.println(mediumWords.getText()); writer.println(hardWords.getText());
+            writer.flush();
+            writer.close();
+        }catch(IOException ex){
+            
         }
     }
     /***/
@@ -139,14 +149,19 @@ public class Window extends javax.swing.JFrame {
         txtWord.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtWord.setText("Parola");
         txtWord.setFocusable(false);
+        txtWord.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtWordMouseClicked(evt);
+            }
+        });
 
         txtMeaning.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtMeaning.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtMeaning.setText("Definizione");
         txtMeaning.setFocusable(false);
-        txtMeaning.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMeaningActionPerformed(evt);
+        txtMeaning.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtMeaningMouseClicked(evt);
             }
         });
 
@@ -252,10 +267,6 @@ public class Window extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtMeaningActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMeaningActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtMeaningActionPerformed
-
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         txtMeaning.setFocusable(true);
         txtWord.setFocusable(true);
@@ -269,55 +280,61 @@ public class Window extends javax.swing.JFrame {
         if(!word.isEmpty() && !meaning.isEmpty()){
             if(word != "Parola" && meaning != "Definizione"){
                 int count = Integer.parseInt(easyWords.getText());
-                if(count == 0)
-                   easyFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
-                else{
-                    easyFile.append(",\n");
-                    easyFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
-                }
+                if(count > 0)
+                    easyFile.append("," + System.getProperty("line.separator"));
+                easyFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
                 easyFile.flush();
-                
-                easyWords.setText("" + count++);
+                easyWords.setText("" + ++count);
+                saveCounters();
             }
         }
     }//GEN-LAST:event_btnEasyActionPerformed
 
     private void btnMediumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMediumActionPerformed
         String word = txtWord.getText();
-        String meaning = txtMeaning.getName();
+        String meaning = txtMeaning.getText();
         if(!word.isEmpty() && !meaning.isEmpty()){
             if(word != "Parola" && meaning != "Definizione"){
-                int count = Integer.parseInt(mediumWords.getText());
-                if(count == 0)
-                   mediumFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
-                else{
-                    mediumFile.append(",\n");
-                    mediumFile.append("(" + (count+1) + "," + word + "," + meaning + "," + "'')");
-                }
+                int count = Integer.parseInt(mediumWords.getText()); 
+                if(count > 0)
+                    mediumFile.append("," + System.getProperty("line.separator"));
+                mediumFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
                 mediumFile.flush();
-                
-                easyWords.setText("" + count++);
+                mediumWords.setText("" + ++count);
+                saveCounters();
             }
         }
     }//GEN-LAST:event_btnMediumActionPerformed
 
     private void btnHardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHardActionPerformed
         String word = txtWord.getText();
-        String meaning = txtMeaning.getName();
+        String meaning = txtMeaning.getText();
         if(!word.isEmpty() && !meaning.isEmpty()){
             if(word != "Parola" && meaning != "Definizione"){
                 int count = Integer.parseInt(hardWords.getText());
-                if(count == 0)
-                   hardFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
-                else{
-                    hardFile.append(",\n");
-                    hardFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
-                }
+                if(count > 0)
+                    hardFile.append("," + System.getProperty("line.separator"));
+                hardFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
                 hardFile.flush();
-                hardWords.setText("" + count++);
+                hardWords.setText("" + ++count);
+                saveCounters();
             }
         }
     }//GEN-LAST:event_btnHardActionPerformed
+
+    private void txtWordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtWordMouseClicked
+        if(txtWord.getText() != "Parola"){
+            txtWord.setFocusable(true);
+            txtWord.setText("");
+        }
+    }//GEN-LAST:event_txtWordMouseClicked
+
+    private void txtMeaningMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtMeaningMouseClicked
+        if(txtMeaning.getText() != "Definizione"){
+            txtMeaning.setFocusable(true);
+            txtMeaning.setText("");
+        }
+    }//GEN-LAST:event_txtMeaningMouseClicked
     
     /**
      * @param args the command line arguments

@@ -151,6 +151,9 @@
         <Property name="text" type="java.lang.String" value="Parola"/>
         <Property name="focusable" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txtWordMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="txtMeaning">
       <Properties>
@@ -162,7 +165,7 @@
         <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtMeaningActionPerformed"/>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txtMeaningMouseClicked"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnNext">
