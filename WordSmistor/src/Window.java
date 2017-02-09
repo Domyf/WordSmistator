@@ -371,7 +371,7 @@ public class Window extends javax.swing.JFrame {
                 int count = Integer.parseInt(mediumWords.getText()); 
                 if(count > 0)
                     mediumFile.append("," + System.getProperty("line.separator"));
-                mediumFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
+                mediumFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\"," + "\"\")");
                 mediumFile.flush();
                 mediumWords.setText("" + ++count);
                 if (wordListOpened) {
@@ -394,7 +394,7 @@ public class Window extends javax.swing.JFrame {
                 int count = Integer.parseInt(hardWords.getText());
                 if(count > 0)
                     hardFile.append("," + System.getProperty("line.separator"));
-                hardFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
+                hardFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\"," + "\"\")");
                 hardFile.flush();
                 hardWords.setText("" + ++count);
                 if (wordListOpened) {
