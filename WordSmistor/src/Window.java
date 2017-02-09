@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -25,15 +26,18 @@ public class Window extends javax.swing.JFrame {
     private String easyFileName = "easywords";
     private String mediumFileName = "mediumwords";
     private String hardFileName = "hardwords";
-    private long wordIndex; 
+    //private long wordIndex; 
     private PrintWriter easyFile, mediumFile, hardFile;
+    private BufferedReader wordListReader;
     private File wordList;
+    private long wordListIndex;
+    private boolean wordListOpened;
     
     public Window() {
         initComponents();
         setLocationRelativeTo(null);
         initCounters();
-        
+        wordListOpened = false;
         easyFile = openWordFile(easyFileName);
         mediumFile = openWordFile(mediumFileName);
         hardFile = openWordFile(hardFileName);
@@ -63,16 +67,18 @@ public class Window extends javax.swing.JFrame {
             return null;
         }
     }
+    
     private void saveCounters(){
         try{
             PrintWriter writer = new PrintWriter(new FileWriter("save"));
-            writer.println(easyWords.getText()); writer.println(mediumWords.getText()); writer.println(hardWords.getText());
+            writer.println(easyWords.getText()); writer.println(mediumWords.getText()); writer.println(hardWords.getText()); writer.println(""+wordListIndex);
             writer.flush();
             writer.close();
         }catch(IOException ex){
             
         }
     }
+    
     /***/
     private void initCounters() {
         try{
@@ -80,12 +86,13 @@ public class Window extends javax.swing.JFrame {
             easyWords.setText(bufferedReader.readLine()); 
             mediumWords.setText(bufferedReader.readLine());
             hardWords.setText(bufferedReader.readLine());
-            wordIndex = Long.parseLong(bufferedReader.readLine());
+            //wordIndex = Long.parseLong(bufferedReader.readLine());
+            wordListIndex = Long.parseLong(bufferedReader.readLine());
             bufferedReader.close();
         }catch(Exception ex){
             try {
                 PrintWriter writer = new PrintWriter(new FileWriter("save"));
-                for(int i=0; i<4; i++)
+                for (int i=0; i<4; i++)
                     writer.println("0");
                 writer.flush();
             } catch (IOException e) {
@@ -93,7 +100,37 @@ public class Window extends javax.swing.JFrame {
             }
         }
     }
-
+    
+    private String loadWordListData(){
+        String temp = null;
+        try {
+            wordListReader = new BufferedReader(new FileReader(wordList.getAbsolutePath()));
+            temp = wordListReader.readLine();
+            for (int i=0; i<wordListIndex; i++)
+                temp = wordListReader.readLine();
+        } catch(IOException ex){
+            System.out.println("Errore nel caricare la riga "+wordListIndex+" da "+wordList.getAbsolutePath()+"\n"+ex.getMessage());
+        }
+        return temp;
+    }
+    
+    private String nextRow() {
+        try {
+            wordListIndex++;
+            return wordListReader.readLine();
+        } catch (IOException ex) {
+            wordListIndex--;
+            System.out.println("Errore nel leggere la riga successiva da "+wordList.getAbsolutePath()+"\n"+ex.getMessage());
+        }
+        return null;
+    }
+    
+    private void setUI(String str) {
+        StringTokenizer stk = new StringTokenizer(str, ",");
+        txtWord.setText(stk.nextToken());
+        txtMeaning.setText(stk.nextToken());
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -104,6 +141,13 @@ public class Window extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        easyWords = new javax.swing.JLabel();
+        mediumWords = new javax.swing.JLabel();
+        hardWords = new javax.swing.JLabel();
+        btnLoad = new javax.swing.JButton();
         btnEasy = new javax.swing.JButton();
         btnHard = new javax.swing.JButton();
         btnMedium = new javax.swing.JButton();
@@ -113,16 +157,33 @@ public class Window extends javax.swing.JFrame {
         btnNew = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        easyWords = new javax.swing.JLabel();
-        mediumWords = new javax.swing.JLabel();
-        hardWords = new javax.swing.JLabel();
-        btnLoad = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WordSmistor 2000");
         setResizable(false);
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Medie");
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("Difficili");
+
+        easyWords.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        easyWords.setText("0");
+
+        mediumWords.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        mediumWords.setText("0");
+
+        hardWords.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        hardWords.setText("0");
+
+        btnLoad.setText("Apri...");
+        btnLoad.setFocusable(false);
+        btnLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadActionPerformed(evt);
+            }
+        });
 
         btnEasy.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnEasy.setText("Facile");
@@ -154,7 +215,6 @@ public class Window extends javax.swing.JFrame {
         txtWord.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtWord.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtWord.setText("Parola");
-        txtWord.setFocusable(false);
         txtWord.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtWordMouseClicked(evt);
@@ -164,7 +224,6 @@ public class Window extends javax.swing.JFrame {
         txtMeaning.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtMeaning.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtMeaning.setText("Definizione");
-        txtMeaning.setFocusable(false);
         txtMeaning.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtMeaningMouseClicked(evt);
@@ -173,6 +232,11 @@ public class Window extends javax.swing.JFrame {
 
         btnNext.setText("Scarta");
         btnNext.setFocusable(false);
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
 
         btnNew.setText("Nuova");
         btnNew.setFocusable(false);
@@ -187,59 +251,36 @@ public class Window extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Facili");
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Medie");
-
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Difficili");
-
-        easyWords.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        easyWords.setText("0");
-
-        mediumWords.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        mediumWords.setText("0");
-
-        hardWords.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        hardWords.setText("0");
-
-        btnLoad.setText("Apri...");
-        btnLoad.setFocusable(false);
-        btnLoad.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLoadActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtWord)
                     .addComponent(txtMeaning)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnEasy, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(30, 30, 30)
                         .addComponent(btnMedium, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                         .addComponent(btnHard, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                            .addComponent(easyWords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(easyWords, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                            .addComponent(mediumWords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(mediumWords, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                            .addComponent(hardWords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(hardWords, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnLoad)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -248,22 +289,22 @@ public class Window extends javax.swing.JFrame {
                         .addComponent(btnNext)))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnNext)
                         .addComponent(btnNew)
                         .addComponent(btnLoad))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(easyWords)
                             .addComponent(hardWords)
                             .addComponent(mediumWords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
@@ -272,7 +313,7 @@ public class Window extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtMeaning, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(45, 45, 45)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEasy, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnMedium, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnHard, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -281,27 +322,43 @@ public class Window extends javax.swing.JFrame {
                 .addGap(8, 8, 8))
         );
 
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         txtMeaning.setFocusable(true);
         txtWord.setFocusable(true);
-        txtMeaning.setText("");
-        txtWord.setText("");
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnEasyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEasyActionPerformed
         String word = txtWord.getText();
         String meaning = txtMeaning.getText();
         if(!word.isEmpty() && !meaning.isEmpty()){
-            if(word != "Parola" && meaning != "Definizione"){
+            if(!word.equals("Parola") && !meaning.equals("Definizione")){
                 int count = Integer.parseInt(easyWords.getText());
                 if(count > 0)
                     easyFile.append("," + System.getProperty("line.separator"));
-                easyFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
+                easyFile.append("(" + (count+1) + "','" + word + "','" + meaning + "','" + "')");
                 easyFile.flush();
                 easyWords.setText("" + ++count);
+                if (wordListOpened) {
+                    String temp = nextRow();
+                    if (temp != null) {
+                        System.out.println("Next");
+                        setUI(temp);
+                    }
+                }
                 saveCounters();
             }
         }
@@ -311,13 +368,20 @@ public class Window extends javax.swing.JFrame {
         String word = txtWord.getText();
         String meaning = txtMeaning.getText();
         if(!word.isEmpty() && !meaning.isEmpty()){
-            if(word != "Parola" && meaning != "Definizione"){
+            if(!word.equals("Parola") && !meaning.equals("Definizione")){
                 int count = Integer.parseInt(mediumWords.getText()); 
                 if(count > 0)
                     mediumFile.append("," + System.getProperty("line.separator"));
                 mediumFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
                 mediumFile.flush();
                 mediumWords.setText("" + ++count);
+                if (wordListOpened) {
+                    String temp = nextRow();
+                    if (!temp.isEmpty()) {
+                        System.out.println("Next");
+                        setUI(temp);
+                    }
+                }
                 saveCounters();
             }
         }
@@ -327,42 +391,54 @@ public class Window extends javax.swing.JFrame {
         String word = txtWord.getText();
         String meaning = txtMeaning.getText();
         if(!word.isEmpty() && !meaning.isEmpty()){
-            if(word != "Parola" && meaning != "Definizione"){
+            if(!word.equals("Parola") && !meaning.equals("Definizione")){
                 int count = Integer.parseInt(hardWords.getText());
                 if(count > 0)
                     hardFile.append("," + System.getProperty("line.separator"));
                 hardFile.append("(" + (count+1) + ",'" + word + "','" + meaning + "'," + "'')");
                 hardFile.flush();
                 hardWords.setText("" + ++count);
+                if (wordListOpened) {
+                    String temp = nextRow();
+                    if (!temp.isEmpty()) {
+                        System.out.println("Next");
+                        setUI(temp);
+                    }
+                }
                 saveCounters();
             }
         }
     }//GEN-LAST:event_btnHardActionPerformed
 
     private void txtWordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtWordMouseClicked
-        if(txtWord.getText() != "Parola"){
-            txtWord.setFocusable(true);
-            txtWord.setText("");
-        }
+        
     }//GEN-LAST:event_txtWordMouseClicked
 
     private void txtMeaningMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtMeaningMouseClicked
-        if(txtMeaning.getText() != "Definizione"){
-            txtMeaning.setFocusable(true);
-            txtMeaning.setText("");
-        }
+        
     }//GEN-LAST:event_txtMeaningMouseClicked
 
     private void btnLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadActionPerformed
         int returnValue = fileChooser.showOpenDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             wordList = fileChooser.getSelectedFile();
+            String temp = loadWordListData();
+            if (!temp.isEmpty()) {
+                setUI(temp);
+                wordListOpened = true;
+            }
+            
             //TODO: Qui ho scelto il file e bisogna caricarlo
             //TODO: Ricordarsi di ricominciare da dove si era rimasti prima
             //TODO: Se premo Scarta deve scartare la parola corrente della wordlist
             //TODO: Se premo Nuova devo rendere focussabili le textfield e scrivere io una parola da aggiungere
         }
     }//GEN-LAST:event_btnLoadActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        if (wordListOpened)
+            setUI(nextRow());
+    }//GEN-LAST:event_btnNextActionPerformed
     
     /**
      * @param args the command line arguments
@@ -413,6 +489,7 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel mediumWords;
     private javax.swing.JTextField txtMeaning;
     private javax.swing.JTextField txtWord;
