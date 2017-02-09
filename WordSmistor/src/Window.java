@@ -349,13 +349,12 @@ public class Window extends javax.swing.JFrame {
                 int count = Integer.parseInt(easyWords.getText());
                 if(count > 0)
                     easyFile.append("," + System.getProperty("line.separator"));
-                easyFile.append("(" + (count+1) + "','" + word + "','" + meaning + "','" + "')");
+                easyFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\",\"" + "\")");
                 easyFile.flush();
                 easyWords.setText("" + ++count);
                 if (wordListOpened) {
                     String temp = nextRow();
                     if (temp != null) {
-                        System.out.println("Next");
                         setUI(temp);
                     }
                 }
