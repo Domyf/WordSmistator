@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -359,6 +360,7 @@ public class Window extends javax.swing.JFrame {
                     } else {
                         txtWord.setText("Parola");
                         txtMeaning.setText("Definizione");
+                        JOptionPane.showMessageDialog(this, "Sono finite le parole!");
                         System.out.println("Fine del file!");
                     }
                 }
@@ -385,6 +387,7 @@ public class Window extends javax.swing.JFrame {
                     } else {
                         txtWord.setText("Parola");
                         txtMeaning.setText("Definizione");
+                        JOptionPane.showMessageDialog(this, "Sono finite le parole!");
                         System.out.println("Fine del file!");
                     }
                 }
@@ -411,6 +414,7 @@ public class Window extends javax.swing.JFrame {
                     } else {
                         txtWord.setText("Parola");
                         txtMeaning.setText("Definizione");
+                        JOptionPane.showMessageDialog(this, "Sono finite le parole!");
                         System.out.println("Fine del file!");
                     }
                 }
