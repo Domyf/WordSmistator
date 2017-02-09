@@ -356,6 +356,10 @@ public class Window extends javax.swing.JFrame {
                     String temp = nextRow();
                     if (temp != null) {
                         setUI(temp);
+                    } else {
+                        txtWord.setText("Parola");
+                        txtMeaning.setText("Definizione");
+                        System.out.println("Fine del file!");
                     }
                 }
                 saveCounters();
@@ -376,9 +380,12 @@ public class Window extends javax.swing.JFrame {
                 mediumWords.setText("" + ++count);
                 if (wordListOpened) {
                     String temp = nextRow();
-                    if (!temp.isEmpty()) {
-                        System.out.println("Next");
+                    if (temp != null) {
                         setUI(temp);
+                    } else {
+                        txtWord.setText("Parola");
+                        txtMeaning.setText("Definizione");
+                        System.out.println("Fine del file!");
                     }
                 }
                 saveCounters();
@@ -399,9 +406,12 @@ public class Window extends javax.swing.JFrame {
                 hardWords.setText("" + ++count);
                 if (wordListOpened) {
                     String temp = nextRow();
-                    if (!temp.isEmpty()) {
-                        System.out.println("Next");
+                    if (temp != null) {
                         setUI(temp);
+                    } else {
+                        txtWord.setText("Parola");
+                        txtMeaning.setText("Definizione");
+                        System.out.println("Fine del file!");
                     }
                 }
                 saveCounters();
