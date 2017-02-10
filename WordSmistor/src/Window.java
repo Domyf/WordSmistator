@@ -158,6 +158,8 @@ public class Window extends javax.swing.JFrame {
         btnNew = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        numeroLettere = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WordSmistor 2000");
@@ -225,9 +227,21 @@ public class Window extends javax.swing.JFrame {
         txtMeaning.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtMeaning.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtMeaning.setText("Definizione");
+        txtMeaning.setAutoscrolls(false);
         txtMeaning.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtMeaningMouseClicked(evt);
+            }
+        });
+        txtMeaning.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                keyTypedHandler(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                keyTypedHandler(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                keyTypedHandler(evt);
             }
         });
 
@@ -251,6 +265,8 @@ public class Window extends javax.swing.JFrame {
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Facili");
+
+        jLabel5.setText("Numero lettere:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -287,7 +303,12 @@ public class Window extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnNew)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnNext)))
+                        .addComponent(btnNext))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(numeroLettere)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -313,7 +334,11 @@ public class Window extends javax.swing.JFrame {
                 .addComponent(txtWord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtMeaning, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(numeroLettere))
+                .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEasy, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnMedium, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -452,6 +477,10 @@ public class Window extends javax.swing.JFrame {
         if (wordListOpened)
             setUI(nextRow());
     }//GEN-LAST:event_btnNextActionPerformed
+
+    private void keyTypedHandler(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyTypedHandler
+        numeroLettere.setText("" + txtMeaning.getText().length());
+    }//GEN-LAST:event_keyTypedHandler
     
     /**
      * @param args the command line arguments
@@ -502,8 +531,10 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel mediumWords;
+    private javax.swing.JLabel numeroLettere;
     private javax.swing.JTextField txtMeaning;
     private javax.swing.JTextField txtWord;
     // End of variables declaration//GEN-END:variables
