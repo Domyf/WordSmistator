@@ -279,7 +279,7 @@
                 </Property>
                 <Property name="lineWrap" type="boolean" value="true"/>
                 <Property name="rows" type="int" value="2"/>
-                <Property name="text" type="java.lang.String" value="Descrizione"/>
+                <Property name="text" type="java.lang.String" value="Definizione"/>
                 <Property name="wrapStyleWord" type="boolean" value="true"/>
               </Properties>
               <Events>

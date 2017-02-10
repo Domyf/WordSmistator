@@ -63,10 +63,10 @@ public class Window extends javax.swing.JFrame {
     /**Apre il file passato per argomento. Se non è presente o se presente ma vuoto, lo crea inserendo il comando INSERT*/
     private PrintWriter openWordFile(String fileName){
         try{
-            BufferedReader reader = new BufferedReader(new FileReader("Data\\"+userName+"\\"+fileName + ".sql"));
+            BufferedReader reader = new BufferedReader(new FileReader("Data\\"+userName+"\\"+fileName + ".txt"));
             if(reader.readLine().isEmpty())
                 return createNewFile(fileName);
-            return new PrintWriter(new FileWriter(fileName + ".sql", true), true);
+            return new PrintWriter(new FileWriter("Data\\"+userName+"\\"+fileName + ".txt", true), true);
         }catch(FileNotFoundException ex){
             return createNewFile(fileName);
         }catch(IOException ex){
@@ -76,8 +76,8 @@ public class Window extends javax.swing.JFrame {
     /**Crea un nuovo file con il nome passato per argomento inserendo il comando INSERT*/
     private PrintWriter createNewFile(String fileName){
         try {
-            PrintWriter writer = new PrintWriter(new FileWriter("Data\\"+userName+"\\"+fileName + ".sql"));
-            writer.println("INSERT INTO " + fileName + "(ID, Word, Meaning, Category) VALUES");
+            PrintWriter writer = new PrintWriter(new FileWriter("Data\\"+userName+"\\"+fileName + ".txt"));
+            //writer.println("INSERT INTO " + fileName + "(ID, Word, Meaning, Category) VALUES");
             writer.flush();
             return writer;
         } catch (IOException ex) {
@@ -278,7 +278,7 @@ public class Window extends javax.swing.JFrame {
         txtMeaning.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtMeaning.setLineWrap(true);
         txtMeaning.setRows(2);
-        txtMeaning.setText("Descrizione");
+        txtMeaning.setText("Definizione");
         txtMeaning.setWrapStyleWord(true);
         txtMeaning.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -396,10 +396,14 @@ public class Window extends javax.swing.JFrame {
             if(!word.equals("Parola") && !meaning.equals("Definizione")){
                 int count = Integer.parseInt(easyWords.getText());
                 if(count > 0)
-                    easyFile.append("," + System.getProperty("line.separator"));
-                easyFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\",\"" + "\")");
-                easyFile.flush();
-                easyWords.setText("" + ++count);
+                    easyFile.append(System.getProperty("line.separator"));
+//                    easyFile.append("," + System.getProperty("line.separator"));
+//                  easyFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\",\"" + "\")");
+//                  easyFile.flush();
+//                  easyWords.setText("" + ++count);
+                  easyFile.append(word + "," + meaning);
+                  easyFile.flush();
+                  easyWords.setText("" + ++count);
                 if (wordListOpened) {
                     String temp = nextRow();
                     if (temp != null) {
@@ -428,9 +432,12 @@ public class Window extends javax.swing.JFrame {
             if(!word.equals("Parola") && !meaning.equals("Definizione")){
                 int count = Integer.parseInt(mediumWords.getText()); 
                 if(count > 0)
-                    mediumFile.append("," + System.getProperty("line.separator"));
-                mediumFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\"," + "\"\")");
-                mediumFile.flush();
+                    mediumFile.append(System.getProperty("line.separator"));
+//                    mediumFile.append("," + System.getProperty("line.separator"));
+//                mediumFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\"," + "\"\")");
+//                mediumFile.flush();
+                  mediumFile.append(word + "," + meaning);
+                  mediumFile.flush();
                 mediumWords.setText("" + ++count);
                 if (wordListOpened) {
                     String temp = nextRow();
@@ -460,8 +467,11 @@ public class Window extends javax.swing.JFrame {
             if(!word.equals("Parola") && !meaning.equals("Definizione")){
                 int count = Integer.parseInt(hardWords.getText());
                 if(count > 0)
-                    hardFile.append("," + System.getProperty("line.separator"));
-                hardFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\"," + "\"\")");
+                    hardFile.append(System.getProperty("line.separator"));
+//                    hardFile.append("," + System.getProperty("line.separator"));
+//                hardFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\"," + "\"\")");
+//                hardFile.flush();
+                hardFile.append(word + "," + meaning);
                 hardFile.flush();
                 hardWords.setText("" + ++count);
                 if (wordListOpened) {
