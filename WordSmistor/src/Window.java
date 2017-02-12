@@ -8,8 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +51,7 @@ public class Window extends javax.swing.JFrame {
         easyFile = openWordFile(easyFileName);
         mediumFile = openWordFile(mediumFileName);
         hardFile = openWordFile(hardFileName);
-        
+        readFromUrl("");
     }
     
     private String getUserName() {
@@ -160,8 +163,24 @@ public class Window extends javax.swing.JFrame {
         }
     }
     
+    private void readFromUrl(String word) {
+        URL oracle;
+        try {
+            oracle = new URL("http://www.dictionary.com/browse/"+word);
+            BufferedReader in = new BufferedReader(new InputStreamReader(oracle.openStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null)
+                System.out.println(inputLine);
+            in.close();
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
     private void openBrowser(String word) {
-        word = "game";
         try {
             Desktop desktop = java.awt.Desktop.getDesktop();
             URI oURL = new URI("http://www.dictionary.com/browse/"+word);
@@ -408,7 +427,6 @@ public class Window extends javax.swing.JFrame {
             if(!word.equals("Parola") && !meaning.equals("Definizione")){
                 int count = Integer.parseInt(easyWords.getText());
                 if(count > 0)
-                    openBrowser(word);
                     easyFile.append(System.getProperty("line.separator"));
 //                    easyFile.append("," + System.getProperty("line.separator"));
 //                  easyFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\",\"" + "\")");
