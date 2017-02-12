@@ -1,5 +1,6 @@
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -158,6 +160,16 @@ public class Window extends javax.swing.JFrame {
         }
     }
     
+    private void openBrowser(String word) {
+        word = "game";
+        try {
+            Desktop desktop = java.awt.Desktop.getDesktop();
+            URI oURL = new URI("http://www.dictionary.com/browse/"+word);
+            desktop.browse(oURL);
+        } catch (Exception ex) {
+            System.out.println("Errore nell'aprire il browser\n"+ex.getMessage());
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -396,6 +408,7 @@ public class Window extends javax.swing.JFrame {
             if(!word.equals("Parola") && !meaning.equals("Definizione")){
                 int count = Integer.parseInt(easyWords.getText());
                 if(count > 0)
+                    openBrowser(word);
                     easyFile.append(System.getProperty("line.separator"));
 //                    easyFile.append("," + System.getProperty("line.separator"));
 //                  easyFile.append("(\"" + (count+1) + "\",\"" + word + "\",\"" + meaning + "\",\"" + "\")");
