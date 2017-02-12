@@ -63,9 +63,9 @@ public class Window extends javax.swing.JFrame {
     /**Apre il file passato per argomento. Se non è presente o se presente ma vuoto, lo crea inserendo il comando INSERT*/
     private PrintWriter openWordFile(String fileName){
         try{
-            BufferedReader reader = new BufferedReader(new FileReader("Data\\"+userName+"\\"+fileName + ".txt"));
-            if(reader.readLine().isEmpty())
-                return createNewFile(fileName);
+//            BufferedReader reader = new BufferedReader(new FileReader("Data\\"+userName+"\\"+fileName + ".txt"));
+//            if(reader.readLine().isEmpty())
+//                return createNewFile(fileName);
             return new PrintWriter(new FileWriter("Data\\"+userName+"\\"+fileName + ".txt", true), true);
         }catch(FileNotFoundException ex){
             return createNewFile(fileName);
